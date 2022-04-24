@@ -1,5 +1,7 @@
 resource "aws_vpc" "main" {
   cidr_block = var.cidr_block
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
     Name = var.vpc_name
@@ -22,15 +24,17 @@ resource "aws_subnet" "public-a" {
 resource "aws_route_table" "public-a" {
   vpc_id = aws_vpc.main.id
 
-  # depends_on = [
-  #   aws_internet_gateway.main,
-  #   aws_vpc.main,
-  #   aws_subnet.public_a
-  # ]
+  depends_on = [
+    aws_vpc.main
+  ]
 
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = var.route_table_name
   }
 }
 
